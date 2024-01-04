@@ -1,0 +1,12 @@
+body{
+    background: #202020;
+    color: white;
+    font-family: sans-serif;
+}
+
+main{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
