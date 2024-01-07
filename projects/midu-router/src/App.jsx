@@ -1,31 +1,35 @@
+import { lazy, Suspense } from 'react';
+
 import './App.css';
+import Home from './pages/Home';
+import Page404 from './pages/404';
+import Search from './pages/Search';
+import { Router } from './Router';
+import { Route } from './Route';
 
-function Home() {
-  return (
-    <>
-      <h2>Home</h2>
-      <p>Welcome to devs! 🚀</p>
-      <a href="/about">Go to About</a>
-    </>
-  );
-}
+const LazyAboutPage = lazy(() => import('./pages/About'));
 
-function About() {
-  return (
-    <>
-      <h2>About</h2>
-      <p>Starting project of midu-router ⚛️ </p>
-      <a href="/">Go to Home</a>
-    </>
-  );
-}
+const appRoutes = [
+  {
+    path: '/',
+    Component: Home,
+  },
+  {
+    path: '/:lang/about',
+    Component: LazyAboutPage,
+  },
+];
 
 function App() {
   return (
     <>
       <h1>midu-router ⚛️</h1>
-      <Home />
-      <About />
+      <Suspense fallback={<div>Loading ...</div>}>
+        <Router routes={appRoutes} defaultComponent={Page404}>
+          <Route path={'/about'} Component={LazyAboutPage} />
+          <Route path={'/search/:query'} Component={Search} />
+        </Router>
+      </Suspense>
     </>
   );
 }
