@@ -1,11 +1,15 @@
+import { Toaster } from "sonner";
 import "./App.css";
-import { ListOfUsers } from "./ListOfUsers";
+import { CreateNewUser } from "./components/CreateNewUser";
+import { ListOfUsers } from "./components/ListOfUsers";
 
 function App() {
 	return (
 		<>
-			<h1>Crud with react and redux ⚛️</h1>
+			<h1 className="py-4 text-4xl font-bold">Crud with react and redux ⚛️</h1>
 			<ListOfUsers />
+			<CreateNewUser />
+			<Toaster richColors />
 		</>
 	);
 }
