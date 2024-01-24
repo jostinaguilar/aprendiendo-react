@@ -1,3 +1,9 @@
+declare global {
+  interface Array<T> {
+    toSorted(compareFn?: (a: T, b: t) => number): T[]
+  }
+}
+
 export interface APIRandonUsers {
   results: Users[]
   info: Info
@@ -89,6 +95,13 @@ export enum Title {
   Monsieur = 'Monsieur',
   Mr = 'Mr',
   Mrs = 'Mrs',
+}
+
+export enum SortBy {
+  NONE = 'none',
+  NAME = 'name',
+  LAST = 'last',
+  COUNTRY = 'country',
 }
 
 export interface Picture {
