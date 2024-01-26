@@ -1,7 +1,7 @@
-import { SortBy, type Users } from '../types.d'
+import { SortBy, type User } from '../types.d'
 
 interface Props {
-  users: Users[]
+  users: User[]
   showColors: boolean
   userDelete: (email: string) => void
   changeSorting: (sort: SortBy) => void

@@ -1,14 +1,19 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { SortBy, type Users } from './types.d'
+import { useMemo, useState } from 'react'
+import { SortBy, type User } from './types.d'
 import './App.css'
 import { UsersList } from './components/UsersList'
+import { useUsers } from './hooks/useUsers'
+import { Results } from './components/Results'
 
 function App() {
-  const [users, setUsers] = useState<Users[]>([])
   const [showColors, setShowColors] = useState(false)
   const [sorting, setSorting] = useState<SortBy>(SortBy.NONE)
-  const originalUsers = useRef<Users[]>([])
+  // const originalUsers = useRef<User[]>([])
   const [filterCountry, setFilterCountry] = useState<string | null>(null)
+
+  const { users, fetchNextPage, hasNextPage, isError, isLoading } = useUsers()
+
+  // console.log(data)
 
   const toggleColor = () => {
     setShowColors(!showColors)
@@ -19,18 +24,6 @@ function App() {
       sorting === SortBy.NONE ? SortBy.COUNTRY : SortBy.NONE
     setSorting(newSortingValue)
   }
-
-  useEffect(() => {
-    fetch('https://randomuser.me/api/?results=100')
-      .then(async (res) => await res.json())
-      .then((data) => {
-        setUsers(data.results)
-        originalUsers.current = data.results
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }, [])
 
   const filteredUsers = useMemo(() => {
     return typeof filterCountry === 'string' && filterCountry.length > 0
@@ -45,7 +38,7 @@ function App() {
   const sortUsers = useMemo(() => {
     if (sorting === SortBy.NONE) return filteredUsers
 
-    const compareProperties: Record<string, (user: Users) => any> = {
+    const compareProperties: Record<string, (user: User) => any> = {
       [SortBy.NAME]: (user) => user.name.first,
       [SortBy.LAST]: (user) => user.name.last,
       [SortBy.COUNTRY]: (users) => users.location.country,
@@ -60,13 +53,13 @@ function App() {
     })
   }, [filteredUsers, sorting])
 
-  const handleDelete = (email: string) => {
+  /*  const handleDelete = (email: string) => {
     const filteredUsers = users.filter((user) => user.email !== email)
     setUsers(filteredUsers)
-  }
+  } */
 
   const handleReset = () => {
-    setUsers(originalUsers.current)
+    // setUsers(originalUsers.current)
   }
 
   const changeSort = (sort: SortBy) => {
@@ -95,12 +88,29 @@ function App() {
             }}
           />
         </header>
-        <UsersList
-          userDelete={handleDelete}
-          showColors={showColors}
-          users={sortUsers}
-          changeSorting={changeSort}
-        />
+        <Results />
+        {users.length > 0 && (
+          <UsersList
+            userDelete={() => {}}
+            showColors={showColors}
+            users={sortUsers}
+            changeSorting={changeSort}
+          />
+        )}
+        {isLoading && <p>Loading...</p>}
+        {!isLoading && isError && <p>Oops! Have a problem...</p>}
+        {!isLoading && !isError && users.length === 0 && <p>No results</p>}
+        {!isLoading && !isError && hasNextPage && (
+          <button
+            type="button"
+            onClick={() => {
+              void fetchNextPage()
+            }}
+          >
+            Load more results
+          </button>
+        )}
+        {!isLoading && !isError && !hasNextPage && <p>No more results</p>}
       </div>
     </>
   )

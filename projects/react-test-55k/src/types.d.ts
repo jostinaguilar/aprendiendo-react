@@ -16,7 +16,7 @@ export interface Info {
   version: string
 }
 
-export interface Users {
+export interface User {
   gender: Gender
   name: Name
   location: Location
